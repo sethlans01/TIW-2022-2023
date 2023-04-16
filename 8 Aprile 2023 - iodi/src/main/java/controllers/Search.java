@@ -57,6 +57,7 @@ public class Search extends HttpServlet {
 
     @Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
+    		
     		String searchKey = request.getParameter("search");
     		
     		if(searchKey == null) {

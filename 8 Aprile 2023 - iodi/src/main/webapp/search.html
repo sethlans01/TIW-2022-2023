@@ -147,14 +147,14 @@
 				      					<span th:text=${supplier.cost}>funny</span>&euro;
 				    				</td>
 				    				<td>
-				    					<form action="/aaaaaaaaaaaa" method="post" th:action="@{/aaaaaaaaaaaa}">
+				    					<form action="/AddToCart" method="post" th:action="@{/AddToCart}">
 					    					<label for="quantity">Quantity:</label>
 					    					<input type = "hidden" th:value="${supplier.cost}" name = "supplierCost">
 					    					<input type = "hidden" th:value="${selectedProduct.code}" name = "productCode">
 					    					<input type = "hidden" th:value="${selectedProduct.name}" name = "productName">
 					    					<input type = "hidden" th:value="${supplier.name}" name = "supplierName">
-					    					<input type="number" id="quantity" name="quantity" min="1" step = "1">
-					    					<input type="submit" class = "primary-button" value="Go to shopping cart">
+					    					<input type="number" id="quantity" name="quantity" value = "1" min="1" step = "1">
+					    					<input type="submit" class = "primary-button" value="Go to shoppitng cart">
 					    				</form>
 				    				</td>
 				    			</tr>

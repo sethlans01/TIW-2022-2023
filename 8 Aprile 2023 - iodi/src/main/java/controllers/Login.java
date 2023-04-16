@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
+import beans.Cart;
 import beans.User;
 import dao.UserDao;
 import utils.ConnectionHandler;
@@ -71,6 +72,7 @@ public class Login extends HttpServlet {
 		String password = request.getParameter("password");
 
 		if(email == null || password == null) {
+			
 			forwardToErrorPage(request,response, "Null email or password");
 			return;
 
@@ -78,6 +80,7 @@ public class Login extends HttpServlet {
 
 		UserDao userDao = new UserDao(connection);
 		User user = null;
+		Cart cart = null;
 
 		try {
 			user = userDao.findUser(email, password);
@@ -94,6 +97,7 @@ public class Login extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		session.setAttribute("currentUser", user);
+		session.setAttribute("currentCar", cart);
 		response.sendRedirect(getServletContext().getContextPath() + PathUtils.goToHomeServletPath);
 
 	}

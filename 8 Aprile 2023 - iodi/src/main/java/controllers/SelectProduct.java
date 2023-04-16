@@ -60,7 +60,9 @@ public class SelectProduct extends HttpServlet {
 	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		String productCode = request.getParameter("productCode");
+		
 		if(productCode == null) {
 			forwardToErrorPage(request,response, "No key to search products with!");
 			return;
