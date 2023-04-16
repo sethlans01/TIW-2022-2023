@@ -13,13 +13,16 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import beans.Product;
 import beans.Supplier;
+import beans.User;
 import dao.SupplierDao;
+import dao.UpdateLastDao;
 import dao.ProductDAO;
 import utils.ConnectionHandler;
 import utils.PathUtils;
@@ -62,6 +65,9 @@ public class SelectProduct extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		String productCode = request.getParameter("productCode");
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("currentUser");
+
 		
 		if(productCode == null) {
 			forwardToErrorPage(request,response, "No key to search products with!");
@@ -72,9 +78,11 @@ public class SelectProduct extends HttpServlet {
 		List<Supplier> suppliers = new ArrayList<>();
 		ProductDAO fullProductDao = new ProductDAO(connection);
 		SupplierDao supplierDao = new SupplierDao(connection);
+		UpdateLastDao updateLastDao = new UpdateLastDao(connection);
 		
 		try {
 			product = fullProductDao.findProduct(productCode);
+			updateLastDao.updateLastFive(currentUser.getEmail(), productCode);
 			suppliers = supplierDao.findSuppliers(productCode);
 			for(int i = 0; i < suppliers.size(); i++) {
 				suppliers.get(i).setName(supplierDao.findSupplierName(suppliers.get(i).getCode())); 
