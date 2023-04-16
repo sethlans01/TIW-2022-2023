@@ -1,8 +1,11 @@
 package controllers;
 
+import static utils.TemplateHandler.getEngine;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,15 +14,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
+
 import beans.Homepage;
 import beans.User;
 import dao.LastFiveDAO;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 import utils.ConnectionHandler;
-import utils.PathUtils;
-
-import static utils.TemplateHandler.getEngine;
 
 @WebServlet("/Home")
 public class Home extends HttpServlet {
@@ -79,13 +80,6 @@ public class Home extends HttpServlet {
 
     }
 
-    // Check if the current client is logged in
-    private boolean checkAccess(HttpSession session) throws ServletException{
-
-        User current = (User) session.getAttribute("currentUser");
-        return current == null;
-
-    }
 
     private void startGraphicEngine(HttpServletRequest request, HttpServletResponse response, Homepage homepageBean) throws ServletException, IOException{
 

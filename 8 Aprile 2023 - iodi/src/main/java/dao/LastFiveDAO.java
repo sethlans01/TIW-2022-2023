@@ -1,14 +1,14 @@
 package dao;
 
-import beans.Homepage;
-import beans.Product;
-
-import java.sql.ResultSet;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import beans.Homepage;
+import beans.Product;
 
 public class LastFiveDAO {
 
@@ -66,13 +66,13 @@ public class LastFiveDAO {
         }
 
         // Call Product DAO to get the name of each product in the list
-        for(int i = 0; i < temp.size(); i++){
+        for (Product element : temp) {
             // Grab a ProductDAO
-            ProductDAO pDAO = new ProductDAO(connection);
+            ProductDao pDAO = new ProductDao(connection);
             // Grab code of the product from the Bean
-            String productCode = temp.get(i).getCode();
+            String productCode = element.getCode();
             // Query the name
-            temp.get(i).setName(pDAO.getProductName(productCode));
+            element.setName(pDAO.getProductName(productCode));
         }
         homepage.setLastFive(temp);
 

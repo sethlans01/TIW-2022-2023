@@ -4,35 +4,37 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
-import beans.User;
-import dao.UserDao;
+import beans.Product;
+import beans.Supplier;
+import dao.SupplierDao;
+import dao.ProductDao;
 import utils.ConnectionHandler;
 import utils.PathUtils;
 import utils.TemplateHandler;
-/*
- * Servlet implementation class Login
 
- */
-@WebServlet("/Login")
-public class Login extends HttpServlet {
+
+@WebServlet("/SelectProduct")
+public class SelectProduct extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private Connection connection;
     private TemplateEngine templateEngine;
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Login() {
+    public SelectProduct() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -52,52 +54,48 @@ public class Login extends HttpServlet {
     		e.printStackTrace();
     	}
     }
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	@Override
+    
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-			doPost(request,response);
+		doPost(request,response);
 	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	@Override
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		String email = request.getParameter("email");
-		String password = request.getParameter("password");
-
-		if(email == null || password == null) {
-			forwardToErrorPage(request,response, "Null email or password");
+		String productCode = request.getParameter("productCode");
+		if(productCode == null) {
+			forwardToErrorPage(request,response, "No key to search products with!");
 			return;
-
 		}
-
-		UserDao userDao = new UserDao(connection);
-		User user = null;
-
+		
+		Product product = null;
+		List<Supplier> suppliers = new ArrayList<>();
+		ProductDao fullProductDao = new ProductDao(connection);
+		SupplierDao supplierDao = new SupplierDao(connection);
+		
 		try {
-			user = userDao.findUser(email, password);
+			product = fullProductDao.findProduct(productCode);
+			suppliers = supplierDao.findSuppliers(productCode);
+			for(int i = 0; i < suppliers.size(); i++) {
+				suppliers.get(i).setName(supplierDao.findSupplierName(suppliers.get(i).getCode())); 
+				suppliers.get(i).setScore(supplierDao.findSupplierScore(suppliers.get(i).getCode())); 
+				suppliers.get(i).setPolicies(supplierDao.findSupplierShips(suppliers.get(i).getCode()));
+
+			}
+			
 		}catch(SQLException e) {
 			forwardToErrorPage(request,response,e.getMessage());
 			return;
 		}
-
-		if(user == null) {
-			request.setAttribute("warning", "Email or password incorrect!");
-			forward(request,response, PathUtils.pathToLoginPage);
+		
+		if(product == null) {
+			request.setAttribute("warning", "Code incorrect!");
+			forward(request,response, PathUtils.pathToErrorPage);
 			return;
 		}
-
-		HttpSession session = request.getSession();
-		session.setAttribute("currentUser", user);
-		response.sendRedirect(getServletContext().getContextPath() + PathUtils.goToHomeServletPath);
-
+		
+		startGraphicEngine(request, response, product, suppliers);
+		
 	}
-
+	
 	private void forwardToErrorPage(HttpServletRequest request, HttpServletResponse response, String error)throws ServletException, IOException{
 		request.setAttribute("error", error);
 		forward(request, response, PathUtils.pathToErrorPage);
@@ -109,5 +107,18 @@ public class Login extends HttpServlet {
 		final WebContext ctx = new WebContext(request, response, servletContext,request.getLocale());
 		templateEngine.process(path,ctx,response.getWriter());
 	}
+
+    private void startGraphicEngine(HttpServletRequest request, HttpServletResponse response, Product product, List<Supplier> suppliers) throws ServletException, IOException{
+
+        String path = PathUtils.pathToSearchPage;
+        String moment = "2";
+        ServletContext servletContext = getServletContext();
+        final WebContext ctx = new WebContext(request, response, servletContext,request.getLocale());
+        ctx.setVariable("selectedProduct", product);
+        ctx.setVariable("suppliers", suppliers);
+        ctx.setVariable("moment", moment);
+        templateEngine.process(path, ctx, response.getWriter());
+
+    }
 
 }
