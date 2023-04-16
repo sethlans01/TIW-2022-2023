@@ -1,0 +1,96 @@
+body {
+    background-color: grey;
+}
+
+/*css about the table showing the login*/
+
+table {
+    text-align: center;
+    border: 4px solid black;
+    border-radius: 30px;
+    background-color: lightgray;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/*css about the username input*/
+
+.username{
+    padding-top: 15px;
+    padding-bottom: 8px;
+    zoom: 1.2;
+}
+
+.username.box{
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 30px;
+    padding: 15px;
+    height: 30px;
+    width: 80%;
+}
+
+.username.text {
+    color: black;
+}
+
+/*css about the password input*/
+
+.password {
+    padding-top: 15px;
+    zoom: 1.2;
+    padding-bottom: 8px;
+}
+
+.password.box {
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 30px;
+    padding: 15px;
+    height: 30px;
+    width: 80%;
+}
+
+.password.text {
+    color: black;
+}
+
+/*css about the submit button*/
+
+.submit {
+    zoom: 1;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.submit.button {
+    color: black;
+    border : 2px solid black;
+    border-radius: 30px;
+    width: 70px;
+}
+
+/*css about the dummy adjusting elements distance*/
+
+.helper{
+    padding-bottom: 15px;
+}
+
+.warning.message{
+    color: black;
+    text-align: center;
+    font-size: 60px;
+    margin-top: 10px;
+}
+
+
+/*css about the title*/
+
+h1 {
+    color: black;
+    text-align: center;
+    padding-top: 90px;
+    padding-bottom: 30px;
+    font-size: 60px;
+}
