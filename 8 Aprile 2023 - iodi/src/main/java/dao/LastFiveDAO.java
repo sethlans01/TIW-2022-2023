@@ -68,7 +68,7 @@ public class LastFiveDAO {
         // Call Product DAO to get the name of each product in the list
         for (Product element : temp) {
             // Grab a ProductDAO
-            ProductDao pDAO = new ProductDao(connection);
+            ProductDAO pDAO = new ProductDAO(connection);
             // Grab code of the product from the Bean
             String productCode = element.getCode();
             // Query the name

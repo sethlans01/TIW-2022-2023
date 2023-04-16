@@ -20,7 +20,7 @@ import org.thymeleaf.context.WebContext;
 import beans.Product;
 import beans.Supplier;
 import dao.SupplierDao;
-import dao.ProductDao;
+import dao.ProductDAO;
 import utils.ConnectionHandler;
 import utils.PathUtils;
 import utils.TemplateHandler;
@@ -68,7 +68,7 @@ public class SelectProduct extends HttpServlet {
 		
 		Product product = null;
 		List<Supplier> suppliers = new ArrayList<>();
-		ProductDao fullProductDao = new ProductDao(connection);
+		ProductDAO fullProductDao = new ProductDAO(connection);
 		SupplierDao supplierDao = new SupplierDao(connection);
 		
 		try {

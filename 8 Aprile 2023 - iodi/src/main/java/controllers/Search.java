@@ -18,7 +18,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import beans.Product;
-import dao.ProductDao;
+import dao.ProductDAO;
 import utils.ConnectionHandler;
 import utils.PathUtils;
 import utils.TemplateHandler;
@@ -65,7 +65,7 @@ public class Search extends HttpServlet {
     		}
 
     		
-    		ProductDao productCostDao = new ProductDao(connection);
+    		ProductDAO productCostDao = new ProductDAO(connection);
     		List<Product> products= null;
 
     		
