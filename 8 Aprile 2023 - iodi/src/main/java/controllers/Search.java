@@ -3,6 +3,7 @@ package controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -78,6 +79,30 @@ public class Search extends HttpServlet {
     		}catch(SQLException e) {
     			forwardToErrorPage(request,response,e.getMessage());
     			return;
+    		}
+    		
+    		List<Integer> toRemove = new ArrayList<>();
+    		
+    		for(int i = 0; i < products.size(); i++) {
+    			
+    			if(products.get(i).getMinCost() == null) {
+    				toRemove.add(i);
+    			}
+    			
+    		}
+    		
+    		Collections.sort(toRemove, new Comparator<Integer>() {
+    		   public int compare(Integer a, Integer b) {
+    		      //todo: handle null
+    		      return b.compareTo(a);
+    		   }
+    		});
+    		
+    		for(int i = 0; i < toRemove.size();i++) {
+    			
+    			int index = toRemove.get(i);
+    			products.remove(index);
+    			
     		}
     		
     		Collections.sort(products, new Comparator<Product>() {
