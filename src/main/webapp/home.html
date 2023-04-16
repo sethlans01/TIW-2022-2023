@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel="stylesheet" type="text/css" href="/css/home.css" th:href="@{/css/home.css}"/>
+  <title>Home</title>
+</head>
+<body>
+<div class = "page title" id="header">
+  	<h1 th:text="${homepage.name}">Welcome back!</h1>
+</div>
+<table class = "table">  <!--This is the table that contains the links to the other pages -->
+  <tbody>
+  <tr>
+    <!--different links to the other pages all on the same row but on different columns-->
+    <td>
+      <a class = "link" href="home.html">Home</a>
+    </td>
+    <td>
+      <a class = "link" href="cart.html">Cart</a>
+    </td>
+    <td>
+      <a class = "link" href="orders.html">Orders</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+<form action="/Search" method="post" th:action="@{/Search}">
+	<div class = "topnav"> <!--This is the search bar -->
+  	<input type="text" name = "search" required placeholder="Search your item of choice">
+  	<br>
+  	<input  class = "submit button" type="submit" value="Search" />
+	</div>
+</form>
+<div>
+  <h2>Last searched products:</h2> <!--This is the list of the last searched products -->
+</div>
+<div class = "contain">
+  <img src="/resources/ecologist_dervish.png" th:src="@{/resources/${homepage.lastFive[0].code}.png}">
+  <br>
+  <b class = "text" th:text="${homepage.lastFive[0].name}">Piero</b>
+</div>
+<div class = "contain">
+  <img src="/resources/ecologist_dervish.png" th:src="@{/resources/${homepage.lastFive[1].code}.png}">
+  <br>
+  <b class = "text" th:text="${homepage.lastFive[1].name}">Angela</b>
+</div>
+<div class = "contain">
+  <img src="/resources/ecologist_dervish.png" th:src="@{/resources/${homepage.lastFive[2].code}.png}">
+  <br>
+  <b class = "text" th:text="${homepage.lastFive[2].name}">Is</b>
+</div>
+<div class = "contain">
+  <img src="/resources/ecologist_dervish.png" th:src="@{/resources/${homepage.lastFive[3].code}.png}">
+  <br>
+  <b class = "text" th:text="${homepage.lastFive[3].name}">The</b>
+</div>
+<div class = "contain">
+  <img src="/resources/ecologist_dervish.png" th:src="@{/resources/${homepage.lastFive[4].code}.png}">
+  <br>
+  <b class = "text" th:text="${homepage.lastFive[4].name}">Best</b>
+</div>
+<div class = "dummy">  <!--This is the dummy div that is used to make the footer stick to the bottom of the page -->
+</div>
+</body>
+</html>
