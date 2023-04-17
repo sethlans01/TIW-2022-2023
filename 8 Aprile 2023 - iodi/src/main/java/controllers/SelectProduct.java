@@ -59,10 +59,6 @@ public class SelectProduct extends HttpServlet {
     }
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doPost(request,response);
-	}
-	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		String productCode = request.getParameter("productCode");
         HttpSession session = request.getSession();
@@ -104,6 +100,10 @@ public class SelectProduct extends HttpServlet {
 		
 		startGraphicEngine(request, response, product, suppliers);
 		
+	}
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doPost(request, response);
 	}
 	
 	private void forwardToErrorPage(HttpServletRequest request, HttpServletResponse response, String error)throws ServletException, IOException{

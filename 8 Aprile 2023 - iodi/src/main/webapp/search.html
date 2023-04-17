@@ -64,7 +64,7 @@
 								<span th:text="${product.minCost}">eheh</span>&euro;
 							</td>
 							<td>
-								<form action="/SelectProduct" method = "post" th:action="@{/SelectProduct}">
+								<form action="/SelectProduct" method = "get" th:action="@{/SelectProduct}">
 									<input type = "hidden" th:value="${product.code}" name = "productCode">
 									<input type = "submit" class = "primary-button" value="Search" >
 								</form>
@@ -147,7 +147,7 @@
 				      					<span th:text=${supplier.cost}>funny</span>&euro;
 				    				</td>
 				    				<td>
-				    					<form action="/AddToCart" method="post" th:action="@{/AddToCart}">
+				    					<form action="/AddToCart" method= "get" th:action="@{/AddToCart}">
 					    					<label for="quantity">Quantity:</label>
 					    					<input type = "hidden" th:value="${supplier.cost}" name = "supplierCost">
 					    					<input type = "hidden" th:value="${selectedProduct.code}" name = "productCode">

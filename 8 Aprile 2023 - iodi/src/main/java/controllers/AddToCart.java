@@ -55,6 +55,10 @@ public class AddToCart extends HttpServlet {
     }
     
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+    
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
         HttpSession session = request.getSession();
         
@@ -104,10 +108,6 @@ public class AddToCart extends HttpServlet {
         session.setAttribute("currentCart", currentCart);
 		response.sendRedirect(getServletContext().getContextPath() + PathUtils.goToCartServletPath);
         
-	}
-    
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doPost(request,response);
 	}
 	
 	private void forwardToErrorPage(HttpServletRequest request, HttpServletResponse response, String error)throws ServletException, IOException{

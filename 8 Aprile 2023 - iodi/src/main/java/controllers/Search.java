@@ -53,67 +53,68 @@ public class Search extends HttpServlet {
 
     @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    			doPost(request,response);
-    	}
+    	
+		String searchKey = request.getParameter("search");
+		
+		if(searchKey == null) {
+			forwardToErrorPage(request,response, "No key to search products with!");
+			return;
+		}
+
+		
+		ProductDAO productCostDao = new ProductDAO(connection);
+		List<Product> products= null;
+
+		
+		try {
+			products = productCostDao.findProducts(searchKey);
+			for(int i = 0; i < products.size();i++){
+				products.get(i).setMinCost(productCostDao.findMinCost(products.get(i).getCode()));
+			}
+		}catch(SQLException e) {
+			forwardToErrorPage(request,response,e.getMessage());
+			return;
+		}
+		
+		List<Integer> toRemove = new ArrayList<>();
+		
+		for(int i = 0; i < products.size(); i++) {
+			
+			if(products.get(i).getMinCost() == null) {
+				toRemove.add(i);
+			}
+			
+		}
+		
+		Collections.sort(toRemove, new Comparator<Integer>() {
+		   public int compare(Integer a, Integer b) {
+		      //todo: handle null
+		      return b.compareTo(a);
+		   }
+		});
+		
+		for(int i = 0; i < toRemove.size();i++) {
+			
+			int index = toRemove.get(i);
+			products.remove(index);
+			
+		}
+		
+		Collections.sort(products, new Comparator<Product>() {
+            @Override
+            public int compare(Product p1, Product p2) {
+                return Float.compare(Float.parseFloat(p1.getMinCost()),Float.parseFloat(p2.getMinCost()));
+            }
+        });
+		
+		startGraphicEngine(request, response, products); 
+		
+	}
 
     @Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
     		
-    		String searchKey = request.getParameter("search");
-    		
-    		if(searchKey == null) {
-    			forwardToErrorPage(request,response, "No key to search products with!");
-    			return;
-    		}
-
-    		
-    		ProductDAO productCostDao = new ProductDAO(connection);
-    		List<Product> products= null;
-
-    		
-    		try {
-    			products = productCostDao.findProducts(searchKey);
-    			for(int i = 0; i < products.size();i++){
-    				products.get(i).setMinCost(productCostDao.findMinCost(products.get(i).getCode()));
-    			}
-    		}catch(SQLException e) {
-    			forwardToErrorPage(request,response,e.getMessage());
-    			return;
-    		}
-    		
-    		List<Integer> toRemove = new ArrayList<>();
-    		
-    		for(int i = 0; i < products.size(); i++) {
-    			
-    			if(products.get(i).getMinCost() == null) {
-    				toRemove.add(i);
-    			}
-    			
-    		}
-    		
-    		Collections.sort(toRemove, new Comparator<Integer>() {
-    		   public int compare(Integer a, Integer b) {
-    		      //todo: handle null
-    		      return b.compareTo(a);
-    		   }
-    		});
-    		
-    		for(int i = 0; i < toRemove.size();i++) {
-    			
-    			int index = toRemove.get(i);
-    			products.remove(index);
-    			
-    		}
-    		
-    		Collections.sort(products, new Comparator<Product>() {
-                @Override
-                public int compare(Product p1, Product p2) {
-                    return Float.compare(Float.parseFloat(p1.getMinCost()),Float.parseFloat(p2.getMinCost()));
-                }
-            });
-    		
-    		startGraphicEngine(request, response, products);
-    		
+    		doGet(request, response);    		
     	}
 
     	private void forwardToErrorPage(HttpServletRequest request, HttpServletResponse response, String error)throws ServletException, IOException{
