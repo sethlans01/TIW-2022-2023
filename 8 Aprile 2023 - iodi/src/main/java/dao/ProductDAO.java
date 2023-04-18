@@ -168,4 +168,47 @@ public class ProductDAO{
 		return minPrice;
 	}
 	
+
+    public Product getDefaultProduct(Integer key) throws SQLException {
+
+        // Result variable
+        Product result = new Product();
+        result.setCode(String.valueOf(key));
+
+        // Set the base structure of the SQL query
+        String performedAction = " adding default product";
+        String query = "SELECT Nome FROM Prodotto WHERE Codice = ?";
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            // Prepare and execute the query
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, String.valueOf(key));
+            resultSet = preparedStatement.executeQuery();
+
+            // Parse the results and create a string
+            while(resultSet.next()) {
+                result.setName(resultSet.getString("Nome"));
+            }
+
+        }catch(SQLException e) {
+            throw new SQLException("Error accessing the DB while" + performedAction);
+        }finally {
+            try {
+                resultSet.close();
+            }catch (Exception e) {
+                throw new SQLException("Error closing the result set while" + performedAction);
+            }
+            try {
+                preparedStatement.close();
+            }catch (Exception e) {
+                throw new SQLException("Error closing the statement while" + performedAction);
+            }
+        }
+
+        return result;
+
+    }
+	
 }
