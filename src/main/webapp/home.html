@@ -1,66 +1,94 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-  <link rel="stylesheet" type="text/css" href="/css/home.css" th:href="@{/css/home.css}"/>
-  <title>Home</title>
-</head>
-<body>
-<div class = "page title" id="header">
-  	<h1 th:text="${homepage.name}">Welcome back!</h1>
-</div>
-<table class = "table">  <!--This is the table that contains the links to the other pages -->
-  <tbody>
-  <tr>
-    <!--different links to the other pages all on the same row but on different columns-->
-    <td>
-      <a class = "link" href="home.html">Home</a>
-    </td>
-    <td>
-      <a class = "link" href="cart.html">Cart</a>
-    </td>
-    <td>
-      <a class = "link" href="orders.html">Orders</a>
-    </td>
-  </tr>
-  </tbody>
-</table>
-<form action="/Search" method="post" th:action="@{/Search}">
-	<div class = "topnav"> <!--This is the search bar -->
-  	<input type="text" name = "search" required placeholder="Search your item of choice">
-  	<br>
-  	<input  class = "submit button" type="submit" value="Search" />
-	</div>
-</form>
-<div>
-  <h2>Last searched products:</h2> <!--This is the list of the last searched products -->
-</div>
-<div class = "contain">
-  <img src="/resources/ecologist_dervish.png" th:src="@{/resources/${homepage.lastFive[0].code}.png}">
-  <br>
-  <b class = "text" th:text="${homepage.lastFive[0].name}">Piero</b>
-</div>
-<div class = "contain">
-  <img src="/resources/ecologist_dervish.png" th:src="@{/resources/${homepage.lastFive[1].code}.png}">
-  <br>
-  <b class = "text" th:text="${homepage.lastFive[1].name}">Angela</b>
-</div>
-<div class = "contain">
-  <img src="/resources/ecologist_dervish.png" th:src="@{/resources/${homepage.lastFive[2].code}.png}">
-  <br>
-  <b class = "text" th:text="${homepage.lastFive[2].name}">Is</b>
-</div>
-<div class = "contain">
-  <img src="/resources/ecologist_dervish.png" th:src="@{/resources/${homepage.lastFive[3].code}.png}">
-  <br>
-  <b class = "text" th:text="${homepage.lastFive[3].name}">The</b>
-</div>
-<div class = "contain">
-  <img src="/resources/ecologist_dervish.png" th:src="@{/resources/${homepage.lastFive[4].code}.png}">
-  <br>
-  <b class = "text" th:text="${homepage.lastFive[4].name}">Best</b>
-</div>
-<div class = "dummy">  <!--This is the dummy div that is used to make the footer stick to the bottom of the page -->
-</div>
-</body>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="./css/home.css" th:href="@{/css/home.css}"/>
+    <title>Home</title>
+  </head>
+  <body>
+    <div id="general">
+        <div id="header"> <!-- Header section -->
+            <h1 id="title"> <!-- Title of the header section -->
+                <span>Welcome back, </span>
+                <span th:text="${homepage.fullName}">User</span>
+                <span>!</span>
+            </h1>
+            <div id="buttons"> <!-- Navigation buttons -->
+                <form action="Home" class="header-button">
+                    <button type="submit" class="primary-button">HOME</button>
+                </form>
+                <form action="cart.html" class="header-button">
+                    <button type="submit" class="primary-button">CART</button>
+                </form>
+                <form action="Orders" class="header-button" method="get">
+                    <button type="submit" class="primary-button">ORDERS</button>
+                </form>
+            </div>
+        </div>
+        <div id="content"> <!-- Content section -->
+            <div class="input-group"> <!-- Search bar and button-->
+                <form action="/Search" method = "get" class="header-button" id="input-button" th:action="@{/Search}">
+                	<input required type="text" name="search" autocomplete="off" class="input" placeholder="Search an item" autofocus>
+                    <button type="submit" class="primary-button">SEARCH</button>
+                </form>
+            </div>
+            <h3>Last 5 seen products</h3>
+            <div id="tablediv">
+                <table class = "table">  <!--This is the table that contains the links to the other pages -->
+                    <tbody>
+                      <tr>
+                        <!--different links to the other pages all on the same row but on different columns-->
+                        <td>
+                            <div class="card" id="product-1"> <!-- Product 1 -->
+                                <div class="card2">
+                                    <img src="./resources/ecologist_dervish.png" th:src="@{${'/resources/' + homepage.lastFive[0].code + '.jpg'}}">
+                                    <br/>
+                                    <b class = "text" th:text="${homepage.lastFive[0].name}">Piero</b>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="card" id="product-2"> <!-- Product 2 -->
+                                <div class="card2">
+                                    <img src="./resources/ecologist_dervish.png" th:src="@{${'/resources/' + homepage.lastFive[1].code + '.jpg'}}">
+                                    <br/>
+                                    <b class = "text" th:text="${homepage.lastFive[1].name}">Angela</b>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="card" id="product-3"> <!-- Product 3 -->
+                                <div class="card2">
+                                    <img src="./resources/ecologist_dervish.png" th:src="@{${'/resources/' + homepage.lastFive[2].code + '.jpg'}}">
+                                    <br/>
+                                    <b class = "text" th:text="${homepage.lastFive[2].name}">Is</b>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="card" id="product-4"> <!-- Product 4 -->
+                                <div class="card2">
+                                    <img src="./resources/ecologist_dervish.png" th:src="@{${'/resources/' + homepage.lastFive[3].code + '.jpg'}}">
+                                    <br/>
+                                    <b class = "text" th:text="${homepage.lastFive[3].name}">The</b>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="card" id="product-5"> <!-- Product 5 -->
+                                <div class="card2">
+                                    <img src="./resources/ecologist_dervish.png" th:src="@{${'/resources/' + homepage.lastFive[4].code + '.jpg'}}">
+                                    <br/>
+                                    <b class = "text" th:text="${homepage.lastFive[4].name}">Best</b>
+                                </div>
+                            </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+            </div>
+        </div>
+    </div>
+  </body>
 </html>

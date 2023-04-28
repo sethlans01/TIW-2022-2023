@@ -1,37 +1,31 @@
-<!DOCtype html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-    	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-		<link rel="stylesheet" type="text/css" href="../css/login.css" th:href="@{/css/login.css}"/>
-        <title>Log In</title>
-    </head>
-    <body>
-        <h1 >Welcome To Your Favourite Shopping App!</h1> <!--This is the title of the page -->
-        <form action="/Login" method="post" th:action="@{/Login}"> <!--This is the form that will be used to log in -->
-            <table class = "table"> <!--This is the table that will contain the form -->
-                <!--different rows with the elements about the login (mail, password, their texts because i did not want to use </br> and submit button)-->
-                <tr class = "username"> 
-                    <td class = "username text">Mail:</td>
-                </tr>
-                <tr> 
-                    <td class = "helper"><input class = "username box" type="text" name="email"  required placeholder="Enter your username"/></td>
-                </tr>
-                <tr class = "password">
-                    <td class = "password text">Password:</td>
-                </tr>
-                <tr>
-                    <td class = "helper"><input class = "password box" type="password" name="password"  required placeholder="Enter your password"/></td>
-                </tr>
-                <tr class = "submit">
-                    <td class = "helper" colspan="2">
-                        <input  class = "submit button" type="submit" value="Log In" />
-                    </td>
-                </tr>
-            </table>
-        </form>
-        <div class = "warning message" th:if="${warning}">
-        	<b>Email or password not valid!</b>
-        </div>
-    </body>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="./css/login.css" th:href="@{/css/login.css}"/>
+  <title>Log In</title>
+</head>
+<body>
+<div id="general">
+  <h1>Welcome To Your Favourite Shopping App!</h1> <!--This is the title of the page -->
+  <div class="login-box"> <!-- Login form -->
+    <p>Login</p>
+    <div class = "warning message" th:if="${warning}">
+      <b>Email or password not valid!</b>
+    </div>
+    <form action="/Login" method="post" th:action="@{/Login}">
+      <div class="user-box">
+        <input required name="email" type="text" autofocus>
+        <label>Email</label>
+      </div>
+      <div class="user-box">
+        <input required  name="password" type="password">
+        <label>Password</label>
+      </div>
+      <button type="submit" class="primary-button">LOGIN</button>
+    </form>
+  </div>
+</div>
+</body>
 </html>
-
