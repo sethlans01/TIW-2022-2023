@@ -77,6 +77,8 @@ public class AddToCart extends HttpServlet {
 			return;
         	
         }
+        
+        boolean alreadyPresent = false;
         float price = Float.parseFloat(priceString);
         int quantity = Integer.parseInt(quantityString);
         CartedProduct product = new CartedProduct();
@@ -112,9 +114,24 @@ public class AddToCart extends HttpServlet {
 	        	}
 	        	else {
 	        		
-	        		cart.get(sellerCode).add(product);
-	        		currentCart.setCart(cart);
+	        		for(CartedProduct checkProduct : cart.get(sellerCode)) {
+	        			
+	        			if(checkProduct.getProductCode().equals(product.getProductCode())) {
+	        				
+	        				int quantityHelper = checkProduct.getQuantity();
+	        				checkProduct.setQuantity(quantityHelper + product.getQuantity());
+	        				alreadyPresent = true;
+	        				
+	        			}
+	        			
+	        		}
+	        		if(alreadyPresent == false) {
+	        			
+		        		cart.get(sellerCode).add(product);
+		        		currentCart.setCart(cart);
 	        		
+	        		}
+
 	        	}
         	}
         	else {
@@ -126,8 +143,9 @@ public class AddToCart extends HttpServlet {
             	currentCart.setCart(cart);
             	
         	}
-        }
         	
+        }
+        
         session.setAttribute("currentCart", currentCart);
 		response.sendRedirect(getServletContext().getContextPath() + PathUtils.goToCartServletPath);
         
