@@ -5,7 +5,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -18,6 +20,8 @@ import javax.servlet.http.HttpSession;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
+import beans.Cart;
+import beans.CartedProduct;
 import beans.Product;
 import beans.Supplier;
 import beans.User;
@@ -63,7 +67,7 @@ public class SelectProduct extends HttpServlet {
 		String productCode = request.getParameter("productCode");
         HttpSession session = request.getSession();
         User currentUser = (User) session.getAttribute("currentUser");
-
+        Cart pageCart = (Cart) session.getAttribute("currentCart");
 		
 		if(productCode == null) {
 			forwardToErrorPage(request,response, "No key to search products with!");
@@ -77,6 +81,11 @@ public class SelectProduct extends HttpServlet {
 		UpdateLastDao updateLastDao = new UpdateLastDao(connection);
 		
 		try {
+			Map<String, List<CartedProduct>> cart = new HashMap<>();
+	        List<CartedProduct> cartedProducts = new ArrayList<>();
+			cart.equals(pageCart.getCart());
+			float valProd = 0;
+			int numProd = 0;
 			product = fullProductDao.findProduct(productCode);
 			updateLastDao.updateLastFive(currentUser.getEmail(), productCode);
 			suppliers = supplierDao.findSuppliers(productCode);
@@ -84,9 +93,20 @@ public class SelectProduct extends HttpServlet {
 				suppliers.get(i).setName(supplierDao.findSupplierName(suppliers.get(i).getCode())); 
 				suppliers.get(i).setScore(supplierDao.findSupplierScore(suppliers.get(i).getCode())); 
 				suppliers.get(i).setPolicies(supplierDao.findSupplierShips(suppliers.get(i).getCode()));
-
+				cartedProducts = cart.get(suppliers.get(i).getName());
+				if(cartedProducts == null) {
+					suppliers.get(i).setValProducts("0");
+					suppliers.get(i).setNumProducts("0");
+				}
+				else {
+					for(CartedProduct cartedProduct : cartedProducts) {
+						valProd += cartedProduct.getPrice()*cartedProduct.getQuantity();
+						numProd += cartedProduct.getQuantity();
+					}
+				}
+				suppliers.get(i).setValProducts(Float.toString(valProd));
+				suppliers.get(i).setNumProducts(Integer.toString(numProd));
 			}
-			
 		}catch(SQLException e) {
 			forwardToErrorPage(request,response,e.getMessage());
 			return;

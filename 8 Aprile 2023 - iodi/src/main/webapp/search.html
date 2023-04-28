@@ -134,6 +134,12 @@
 				    				<td class = "table column">
 				      					<b>Unit cost</b>
 				    				</td>
+				    				<td class = "table column">
+				      					<b>Number of products already in cart</b>
+				    				</td>
+				    				<td class = "table column">
+				      					<b>Total price of products already in cart</b>
+				    				</td>
 				  				</tr>
 				  				<tr>
 				    				<td class = "table column" th:text=${supplier.name}>
@@ -145,16 +151,11 @@
 				    				<td class = "table column">
 				      					<span th:text=${supplier.cost}>funny</span>&euro;
 				    				</td>
+				    				<td class = "table column" th:text=${supplier.numProducts}>
+				    					funny
+				    				</td>
 				    				<td class = "table column">
-				    					<form action="/AddToCart" method= "get" th:action="@{/AddToCart}">
-					    					<label for="quantity">Quantity:</label>
-					    					<input type = "hidden" th:value="${supplier.cost}" name = "supplierCost">
-					    					<input type = "hidden" th:value="${selectedProduct.code}" name = "productCode">
-					    					<input type = "hidden" th:value="${selectedProduct.name}" name = "productName">
-					    					<input type = "hidden" th:value="${supplier.name}" name = "supplierName">
-					    					<input type="number" required id="quantity" name="quantity" value = "1" min="1" step = "1">
-					    					<input type="submit" class = "primary-button" value="Go to shopping cart">
-					    				</form>
+				      					<span th:text=${supplier.valProducts}>funny</span>&euro;
 				    				</td>
 				    			</tr>
 				    			<tr>
@@ -169,6 +170,17 @@
 				    				</td>
 									<td class = "table column">
 				    					<b>Min expanses for free expedition</b>
+				    				</td>
+				    				<td class = "table column">
+				    					<form action="/AddToCart" method= "get" th:action="@{/AddToCart}">
+					    					<label for="quantity">Quantity:</label>
+					    					<input type = "hidden" th:value="${supplier.cost}" name = "supplierCost">
+					    					<input type = "hidden" th:value="${selectedProduct.code}" name = "productCode">
+					    					<input type = "hidden" th:value="${selectedProduct.name}" name = "productName">
+					    					<input type = "hidden" th:value="${supplier.name}" name = "supplierName">
+					    					<input type="number" required id="quantity" name="quantity" value = "1" min="1" step = "1">
+					    					<input type="submit" class = "primary-button" value="Go to shopping cart">
+					    				</form>
 				    				</td>
 				    			</tr>
 				    			<tr th:each= "policy : ${supplier.policies}">

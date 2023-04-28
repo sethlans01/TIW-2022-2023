@@ -80,7 +80,7 @@ public class Login extends HttpServlet {
 
 		UserDao userDao = new UserDao(connection);
 		User user = null;
-		Cart cart = null;
+		Cart cart = new Cart();
 
 		try {
 			user = userDao.findUser(email, password);
@@ -97,7 +97,7 @@ public class Login extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		session.setAttribute("currentUser", user);
-		session.setAttribute("currentCar", cart);
+		session.setAttribute("currentCart", cart);
 		response.sendRedirect(getServletContext().getContextPath() + PathUtils.goToHomeServletPath);
 
 	}
