@@ -81,43 +81,62 @@ public class SelectProduct extends HttpServlet {
 		UpdateLastDao updateLastDao = new UpdateLastDao(connection);
 		
 		try {
-			Map<String, List<CartedProduct>> cart = new HashMap<>();
-	        List<CartedProduct> cartedProducts = new ArrayList<>();
-			cart.equals(pageCart.getCart());
 			float valProd = 0;
 			int numProd = 0;
 			product = fullProductDao.findProduct(productCode);
 			updateLastDao.updateLastFive(currentUser.getEmail(), productCode);
 			suppliers = supplierDao.findSuppliers(productCode);
+			
 			for(int i = 0; i < suppliers.size(); i++) {
+				
 				suppliers.get(i).setName(supplierDao.findSupplierName(suppliers.get(i).getCode())); 
 				suppliers.get(i).setScore(supplierDao.findSupplierScore(suppliers.get(i).getCode())); 
 				suppliers.get(i).setPolicies(supplierDao.findSupplierShips(suppliers.get(i).getCode()));
-				cartedProducts = cart.get(suppliers.get(i).getCode());
-				if(cartedProducts == null) {
-					suppliers.get(i).setValProducts("0");
-					suppliers.get(i).setNumProducts("0");
-				}
-				else {
-					for(CartedProduct cartedProduct : cartedProducts) {
-						valProd += cartedProduct.getPrice()*cartedProduct.getQuantity();
-						numProd += cartedProduct.getQuantity();
+				
+				if(pageCart.getCart() != null) {
+					if(pageCart.getCart().get(suppliers.get(i).getCode()) == null) {
+						
+						suppliers.get(i).setValProducts("0");
+						suppliers.get(i).setNumProducts("0");
+						
+					}
+					else {
+						for(CartedProduct cartedProduct : pageCart.getCart().get(suppliers.get(i).getCode())) {
+							
+							valProd += cartedProduct.getPrice()*cartedProduct.getQuantity();
+							numProd += cartedProduct.getQuantity();
+							
+						}
 					}
 				}
+				else {
+					
+					Map<String, List<CartedProduct>> cart = new HashMap<>(); 
+					pageCart.setCart(cart);
+					suppliers.get(i).setValProducts("0");
+					suppliers.get(i).setNumProducts("0");
+					
+				}
+				
 				suppliers.get(i).setValProducts(Float.toString(valProd));
 				suppliers.get(i).setNumProducts(Integer.toString(numProd));
+				
 			}
 		}catch(SQLException e) {
+			
 			forwardToErrorPage(request,response,e.getMessage());
 			return;
+			
 		}
 		
 		if(product == null) {
+			
 			request.setAttribute("warning", "Code incorrect!");
 			forward(request,response, PathUtils.pathToErrorPage);
 			return;
+			
 		}
-		
+
 		startGraphicEngine(request, response, product, suppliers);
 		
 	}

@@ -64,23 +64,23 @@ public class AddToCart extends HttpServlet {
         
         Cart currentCart = (Cart) session.getAttribute("currentCart");
         
-        String seller = request.getParameter("supplierName");
+        String sellerCode = request.getParameter("supplierCode");
+        String supplierName = request.getParameter("supplierName");
         String priceString = request.getParameter("supplierCost");
         String code = request.getParameter("productCode");
         String name = request.getParameter("productName");
         String quantityString = request.getParameter("quantity");
         
-        if(seller == null || priceString == null || code == null || name == null || quantityString == null) {
+        if(sellerCode == null || priceString == null || code == null || name == null || quantityString == null || supplierName == null) {
         	
 			forwardToErrorPage(request,response, "Null product parameter");
 			return;
         	
         }
-        
         float price = Float.parseFloat(priceString);
         int quantity = Integer.parseInt(quantityString);
         CartedProduct product = new CartedProduct();
-        product.setSellerName(seller);
+        product.setSellerName(supplierName);
         product.setPrice(price);
         product.setQuantity(quantity);
         product.setProductCode(code);
@@ -91,20 +91,43 @@ public class AddToCart extends HttpServlet {
         	List<CartedProduct> products = new ArrayList<>();
         	products.add(product);
         	Map<String, List<CartedProduct>> cart = new HashMap<>();
-        	cart.put(seller, products);
+        	cart.put(sellerCode, products);
         	Cart cartHelp = new Cart(); 
         	cartHelp.setCart(cart);
         	currentCart = cartHelp;
+        	
         }
         else {
         	
-        	Map<String, List<CartedProduct>> cart = currentCart.getCart();
-        	List<CartedProduct> products = cart.get(seller);
-        	products.add(product);
-        	currentCart.setCart(cart);
-        	
+        	if(currentCart.getCart() != null) {
+        		
+	        	Map<String, List<CartedProduct>> cart = currentCart.getCart();
+	        	List<CartedProduct> products = null;
+	        	if(cart.get(sellerCode) == null) {
+	        		
+	        		products = new ArrayList<>();
+	            	products.add(product);
+	            	cart.put(sellerCode, products);
+	
+	        	}
+	        	else {
+	        		
+	        		cart.get(sellerCode).add(product);
+	        		currentCart.setCart(cart);
+	        		
+	        	}
+        	}
+        	else {
+        		
+        		Map<String,List<CartedProduct>> cart = new HashMap<>();
+        		List<CartedProduct> products = new ArrayList<>();
+            	products.add(product);
+            	cart.put(sellerCode, products);
+            	currentCart.setCart(cart);
+            	
+        	}
         }
-		
+        	
         session.setAttribute("currentCart", currentCart);
 		response.sendRedirect(getServletContext().getContextPath() + PathUtils.goToCartServletPath);
         
