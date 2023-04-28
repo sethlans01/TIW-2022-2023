@@ -89,11 +89,14 @@ public class SelectProduct extends HttpServlet {
 			
 			for(int i = 0; i < suppliers.size(); i++) {
 				
+				valProd = 0;
+				numProd = 0;
 				suppliers.get(i).setName(supplierDao.findSupplierName(suppliers.get(i).getCode())); 
 				suppliers.get(i).setScore(supplierDao.findSupplierScore(suppliers.get(i).getCode())); 
 				suppliers.get(i).setPolicies(supplierDao.findSupplierShips(suppliers.get(i).getCode()));
 				
 				if(pageCart.getCart() != null) {
+
 					if(pageCart.getCart().get(suppliers.get(i).getCode()) == null) {
 						
 						suppliers.get(i).setValProducts("0");
@@ -101,13 +104,18 @@ public class SelectProduct extends HttpServlet {
 						
 					}
 					else {
+						
 						for(CartedProduct cartedProduct : pageCart.getCart().get(suppliers.get(i).getCode())) {
 							
 							valProd += cartedProduct.getPrice()*cartedProduct.getQuantity();
 							numProd += cartedProduct.getQuantity();
 							
 						}
+						suppliers.get(i).setValProducts(Float.toString(valProd));
+						suppliers.get(i).setNumProducts(Integer.toString(numProd));
+						
 					}
+					
 				}
 				else {
 					
@@ -117,9 +125,6 @@ public class SelectProduct extends HttpServlet {
 					suppliers.get(i).setNumProducts("0");
 					
 				}
-				
-				suppliers.get(i).setValProducts(Float.toString(valProd));
-				suppliers.get(i).setNumProducts(Integer.toString(numProd));
 				
 			}
 		}catch(SQLException e) {
