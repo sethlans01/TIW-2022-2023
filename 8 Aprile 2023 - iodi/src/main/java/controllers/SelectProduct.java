@@ -93,7 +93,7 @@ public class SelectProduct extends HttpServlet {
 				suppliers.get(i).setName(supplierDao.findSupplierName(suppliers.get(i).getCode())); 
 				suppliers.get(i).setScore(supplierDao.findSupplierScore(suppliers.get(i).getCode())); 
 				suppliers.get(i).setPolicies(supplierDao.findSupplierShips(suppliers.get(i).getCode()));
-				cartedProducts = cart.get(suppliers.get(i).getName());
+				cartedProducts = cart.get(suppliers.get(i).getCode());
 				if(cartedProducts == null) {
 					suppliers.get(i).setValProducts("0");
 					suppliers.get(i).setNumProducts("0");
