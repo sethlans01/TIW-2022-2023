@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+	  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  	  <link rel="stylesheet" type="text/css" href="/css/search.css" th:href="@{/css/search.css}"/>
+	  <title>Search</title>
+	</head>
+	<body>
+	
+    <div id="general">
+        <div id="header"> <!-- Header section -->
+            <h1 id="title"> <!-- Title of the header section -->
+                <span>Here what we found!</span>
+            </h1>
+            <div id="buttons"> <!-- Navigation buttons -->
+                <form action="Home" class="header-button">
+                    <button type="submit" class="primary-button">HOME</button>
+                </form>
+                <form action="cart.html" class="header-button">
+                    <button type="submit" class="primary-button">CART</button>
+                </form>
+                <form action="Orders" class="header-button" method="get">
+                    <button type="submit" class="primary-button">ORDERS</button>
+                </form>
+            </div>
+         </div>
+
+
+		<div id = "tablediv" th:if="${moment == 1}" >
+		   <div th:switch="${products.size}">
+			<div th:case="0">
+				<div>It appears we could't find anything about your input, big man!</div>
+			</div>
+			<div th:case="*">					
+				<table class = "table" th:each="product : ${products}">
+					<tbody>
+						<tr>
+							<td class = "table column">
+								<b>Image</b>
+							</td>
+							<td class = "table column">
+								<b>Name</b>
+							</td>
+							<td class = "table column">
+								 	<b>Code</b>
+							</td>
+							<td class = "table column">
+									<b>Min Cost</b>
+							</td>
+						</tr>
+						<tr>
+							<td class = "table column">
+								<img class= "image" src="/resources/ecologist_dervish.png" th:src="@{${'/resources/' + product.code + '.jpg'}}">
+							</td>
+							<td class = "table column" th:text="${product.name}">
+								eheh funny product
+							</td>
+							<td class = "table column" th:text="${product.code}">
+								eheh funny product
+							</td>
+							<td class = "table column">
+								<span th:text="${product.minCost}">eheh</span>&euro;
+							</td>
+							<td class = "table column">
+								<form action="/SelectProduct" method = "get" th:action="@{/SelectProduct}">
+									<input type = "hidden" th:value="${product.code}" name = "productCode">
+									<input type = "submit" class = "primary-button" value="Search" >
+								</form>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+		
+		<div id = "tablediv" th:if="${moment == 2}">
+			<div>
+				<table class = "table">
+					<tbody>
+						<tr>
+							<td class = "table column">
+								<b>Image</b>
+							</td>
+							<td class = "table column">
+								<b>Code</b>
+							</td>
+							<td class = "table column">
+								<b>Name</b>
+							</td>
+							<td class = "table column">
+								<b>Description</b>
+							</td>
+							<td class = "table column">
+								<b>Category</b>
+							</td>
+						</tr>
+						<tr>
+							<td class = "table column">
+								<img class = "image" src="/resources/ecologist_dervish.png" th:src="@{${'/resources/' + selectedProduct.code + '.jpg'}}">
+							</td>
+							<td class = "table column" th:text="${selectedProduct.code}">
+								eheh funny product code
+							</td>
+							<td class = "table column" th:text="${selectedProduct.name}">
+								eheh funny product name
+							</td>
+							<td class = "table column" th:text="${selectedProduct.description}">
+								eheh funny product description
+							</td>
+							<td class = "table column" th:text="${selectedProduct.category}">
+								eheh funny product category
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div th:switch="${suppliers.size}">
+				<div th:case="0">
+					<div>No luck big man</div>
+				</div>
+				<div th:case="*">
+					<h2 id = "title_two">Here the sellers:</h2>
+					<div th:each="supplier : ${suppliers}">
+						<table class = "table"> 
+				  			<tbody>
+				  				<tr>
+				  					<td class = "table column">
+										<b>Company name</b>
+				    				</td >
+				    				<td class = "table column">
+				      					<b>Score</b>
+				    				</td>
+				    				<td class = "table column">
+				      					<b>Unit cost</b>
+				    				</td>
+				    				<td class = "table column">
+				      					<b>Number of products already in cart</b>
+				    				</td>
+				    				<td class = "table column">
+				      					<b>Total price of products already in cart</b>
+				    				</td>
+				  				</tr>
+				  				<tr>
+				    				<td class = "table column" th:text=${supplier.name}>
+										funny
+				    				</td>			    			
+				    				<td class = "table column" th:text=${supplier.score}>
+				      					funny
+				    				</td>
+				    				<td class = "table column">
+				      					<span th:text=${supplier.cost}>funny</span>&euro;
+				    				</td>
+				    				<td class = "table column" th:text=${supplier.numProducts}>
+				    					funny
+				    				</td>
+				    				<td class = "table column">
+				      					<span th:text=${supplier.valProducts}>funny</span>&euro;
+				    				</td>
+				    			</tr>
+				    			<tr>
+				    				<td class = "table column">
+				    					<b>Min elements for shipping</b>
+				    				</td>
+				    				<td class = "table column">
+				    					<b>Max elements for shipping</b>
+				    				</td>
+									<td class = "table column">
+				    					<b>Shipping cost</b>
+				    				</td>
+									<td class = "table column">
+				    					<b>Min expanses for free expedition</b>
+				    				</td>
+				    				<td class = "table column">
+				    					<form action="/AddToCart" method= "get" th:action="@{/AddToCart}">
+					    					<label for="quantity">Quantity:</label>
+					    					<input type = "hidden" th:value="${supplier.cost}" name = "supplierCost">
+					    					<input type = "hidden" th:value="${selectedProduct.code}" name = "productCode">
+					    					<input type = "hidden" th:value="${selectedProduct.name}" name = "productName">
+					    					<input type = "hidden" th:value="${supplier.name}" name = "supplierName">
+					    					<input type="number" required id="quantity" name="quantity" value = "1" min="1" step = "1">
+					    					<input type="submit" class = "primary-button" value="Go to shopping cart">
+					    				</form>
+				    				</td>
+				    			</tr>
+				    			<tr th:each= "policy : ${supplier.policies}">
+				    				<td class = "table column">
+				   						<span th:text="${policy.min}">funny</span>
+ 									</td>
+ 									<td class = "table column">
+ 				    					<span th:if = "${policy.gratis == 0}" th:text="${policy.max}">funny</span>
+ 				    					<span th:if = "${policy.gratis == 1}">noMax</span>
+				   					</td>
+			 						<td class = "table column">
+										 <span th:text="${policy.cost}">funny</span>&euro;
+		  							</td>
+			 						<td class = "table column">
+										 <span th:text="${policy.minGrat}">funny</span>&euro;
+		  							</td>
+								</tr>	
+				  			</tbody>
+						</table>					
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</body>
+	
+</html>
