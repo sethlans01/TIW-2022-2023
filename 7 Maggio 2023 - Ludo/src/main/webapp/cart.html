@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="./css/cart.css" th:href="@{/css/cart.css}"/>
+    <title>Cart</title>
+  </head>
+  <body>
+    <div id="general">
+      <div id="header"> <!-- Header section -->
+          <h1 id="title"> <!-- Title of the header section -->
+            Your Cart
+          </h1>
+          <div id="buttons"> <!-- Navigation buttons -->
+              <form action="Home" class="header-button">
+                  <button type="submit" class="primary-button">HOME</button>
+              </form>
+              <form action="Cart" class="header-button" method="get">
+                  <button type="submit" class="primary-button">CART</button>
+              </form>
+              <form action="Orders" class="header-button" method="get">
+                  <button type="submit" class="primary-button">ORDERS</button>
+              </form>
+          </div>
+      </div>
+      <div id="content"> <!-- Content section -->
+        <div class="empty-cart" th:if="${emptyCart} == true">
+          <h2>Your cart seems to be empty...</h2>
+          <h2>Try to add some products ^-^</h2>
+          <img src="./resources/emptyCart.jpg">
+        </div>
+        <div class="sellerProductList" th:each="element : ${cart.getCart()}"> <!-- Single seller section -->
+          <div class="left-side"> <!-- Left side of the single seller section -->
+            <h3>
+              <span>Products from: </span> <!-- Left side seller name -->
+              <span th:text="${names.getSellerNames().get(element.key)}"> Seller</span>
+            </h3>
+            <div class="product-card" th:each="product : ${element.value}"> <!-- Left side single product card -->
+              <img src="./resources/ecologist_dervish.png" th:src="@{${'/resources/' + product.productCode + '.jpg'}}">
+              <div>
+                <h4>
+                  <span th:text="${product.productName}">Product Name</span>
+                  <span>[</span>
+                  <span th:text="${product.price}">0.00</span>
+                  <span>$ per unit ]</span>
+                </h4>
+                <h4>
+                  <span>Quantity:</span>
+                  <span th:text="${product.quantity}">0</span>
+                </h4>
+                <h4>
+                  <span>Total Cost:</span>
+                  <span th:text="${product.price * product.quantity}">0.00</span>
+                  <span>$</span>
+                </h4>
+              </div>
+            </div>
+          </div>
+          <div class="right-side"> <!-- Right side of the single seller section -->
+            <div class="right-side-text"> <!-- Right side texts -->
+              <h3>
+                <span>Products Cost:</span>
+                <span th:text="${costs.getCosts().get(element.key).getProductsCost()}">0.00</span>
+                <span>$</span>
+              </h3>
+              <h3>
+                <span>Delivery Cost:</span>
+                <span th:text="${costs.getCosts().get(element.key).getDeliveryCost()}">0.00</span>
+                <span>$</span>
+              </h3>
+              <h3>
+                <span>Total Due:</span>
+                <span th:text="${costs.getCosts().get(element.key).getTotal()}">0.00</span>
+                <span>$</span>
+              </h3>
+            </div>
+            <form action="AddToOrder" class="header-button" method="post"> <!-- Right side order products button -->
+              <input type="hidden" th:value="${element.key}" name="sellerId">
+              <button type="submit" class="primary-button">ORDER PRODUCTS</button>
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+body{
+    background-color: #CAD2C5;
+    font-family: 'Valorant', sans-serif;
+}
+
+.title{
+    color: #4A4E69;
+    text-align: center;
+    font-size: 300%;
+}
+
+.error.description{
+    color: black;
+    text-align: center;
+    font-size: 150%;
+}
+
+.link.login{
+    color: #354F52;
+    text-align: center;
+    font-size: 150%;
+}
+
+a{
+    color: #4A4E69;
+}

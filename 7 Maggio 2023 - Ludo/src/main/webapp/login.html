@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="./css/login.css" th:href="@{/css/login.css}"/>
+  <title>Log In</title>
+</head>
+<body>
+<div id="general">
+  <h1>Welcome To Your Favourite Shopping App!</h1> <!--This is the title of the page -->
+  <div class="login-box"> <!-- Login form -->
+    <p>Login</p>
+    <div class = "warning message" th:if="${warning}">
+      <b>Email or password not valid!</b>
+    </div>
+    <form action="/Login" method="post" th:action="@{/Login}">
+      <div class="user-box">
+        <input required name="email" type="text" autofocus>
+        <label>Email</label>
+      </div>
+      <div class="user-box">
+        <input required  name="password" type="password">
+        <label>Password</label>
+      </div>
+      <button type="submit" class="primary-button">LOGIN</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

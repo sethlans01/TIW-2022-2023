@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="./css/orders.css" th:href="@{/css/orders.css}"/>
+        <title>Orders</title>
+    </head>
+    <body>
+        <div id="general">
+            <div id="header"> <!-- Header section -->
+                <h1 id="title"> <!-- Title of the header section -->
+                    Your Orders
+                </h1>
+                <div id="buttons"> <!-- Navigation buttons -->
+                    <form action="Home" class="header-button">
+                        <button type="submit" class="primary-button">HOME</button>
+                    </form>
+                    <form action="Cart" class="header-button" method="get">
+                        <button type="submit" class="primary-button">CART</button>
+                    </form>
+                    <form action="Orders" class="header-button"  method="get">
+                        <button type="submit" class="primary-button">ORDERS</button>
+                    </form>
+                </div>
+            </div>
+            <div id="content"> <!-- Content section -->
+                <div class="empty-order-list" th:if="${emptyList} == true">
+                    <h2>Your order list seems to be empty...</h2>
+                    <h2>Go and buy something ^_^</h2>
+                    <img src="./resources/emptyOrderList.jpg">
+                </div>
+                <div class="orderList" th:each="order : ${orders.orderList}"> <!-- Single order list -->
+                    <div class="left-side"> <!-- Left side of the single order section -->
+                        <h4>
+                            <span>Order n.</span>
+                            <span th:text="${order.orderNumber}">0</span>
+                        </h4>
+                        <h4>
+                            <span>Shipping date:</span>
+                            <span th:text="${order.shippingDate}">1990-01-01</span>
+                        </h4>
+                        <h4>
+                            <span>Shipping address:</span>
+                            <span th:text="${order.address}">Piazza Leonardo da Vinci, 32, Milano, 20133 MI</span>
+                        </h4>
+                        <h4>
+                            <span>Seller:</span>
+                            <span th:text="${order.sellerName}">Katy Perry</span>
+                        </h4>
+                        <div class="product-card" th:each="product : ${order.orderedProduct}">
+                            <img src="./resources/ecologist_dervish.png" th:src="@{${'/resources/' + product.productCode + '.jpg'}}">
+                            <div>
+                                <h4>
+                                    <span th:text="${product.productName}">Product Name</span>
+                                </h4>
+                                <h4>
+                                    <span>Quantity:</span>
+                                    <span th:text="${product.quantity}">0</span>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right-side"> <!-- Right side of the single order section -->
+                        <h4>
+                            <span>Total due:</span>
+                            <span th:text="${order.totalDue}">0.00</span>
+                            <span>$</span>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
