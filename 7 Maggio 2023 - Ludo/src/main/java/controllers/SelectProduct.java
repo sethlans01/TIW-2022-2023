@@ -32,6 +32,10 @@ import utils.ConnectionHandler;
 import utils.PathUtils;
 import utils.TemplateHandler;
 
+import static utils.Statics.checkAccess;
+
+//Servlet called when user wants to see more information about product 
+//with all its sellers
 
 @WebServlet("/SelectProduct")
 public class SelectProduct extends HttpServlet {
@@ -64,85 +68,142 @@ public class SelectProduct extends HttpServlet {
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		String productCode = request.getParameter("productCode");
-        HttpSession session = request.getSession();
-        User currentUser = (User) session.getAttribute("currentUser");
-        Cart pageCart = (Cart) session.getAttribute("currentCart");
+		//Check if there is user in session. Redirects to error page otherwise.
 		
-		if(productCode == null) {
-			forwardToErrorPage(request,response, "No key to search products with!");
-			return;
-		}
+    	HttpSession session = request.getSession();
 		
-		Product product = null;
-		List<Supplier> suppliers = new ArrayList<>();
-		ProductDAO fullProductDao = new ProductDAO(connection);
-		SupplierDao supplierDao = new SupplierDao(connection);
-		UpdateLastDao updateLastDao = new UpdateLastDao(connection);
-		
-		try {
-			float valProd = 0;
-			int numProd = 0;
-			product = fullProductDao.findProduct(productCode);
-			updateLastDao.updateLastFive(currentUser.getEmail(), productCode);
-			suppliers = supplierDao.findSuppliers(productCode);
+		if(checkAccess(session)) {
 			
-			for(int i = 0; i < suppliers.size(); i++) {
+			//Check validity of parameters. Redirects to error page otherwise.
+			
+			String productCode = request.getParameter("productCode");
+	        User currentUser = (User) session.getAttribute("currentUser");
+	        Cart pageCart = (Cart) session.getAttribute("currentCart");
+			
+			if(productCode == null) {
 				
-				valProd = 0;
-				numProd = 0;
-				suppliers.get(i).setName(supplierDao.findSupplierName(suppliers.get(i).getCode())); 
-				suppliers.get(i).setScore(supplierDao.findSupplierScore(suppliers.get(i).getCode())); 
-				suppliers.get(i).setPolicies(supplierDao.findSupplierShips(suppliers.get(i).getCode()));
+				forwardToErrorPage(request,response, "No key to search products with!");
+				return;
 				
-				if(pageCart.getCart() != null) {
-
-					if(pageCart.getCart().get(suppliers.get(i).getCode()) == null) {
-						
-						suppliers.get(i).setValProducts("0");
-						suppliers.get(i).setNumProducts("0");
+			}
+			
+	        if(!productCode.matches("[0-9]+")) {
+	        	
+	            forwardToErrorPage(request,response, "Invalid product code!");
+	            return;
+	        	
+	        }
+	        
+	        ProductDAO productDao = new ProductDAO(connection);
+	        
+	        try {
+				if(!productDao.seeProduct(productCode)) {
+					forwardToErrorPage(request, response, "Invalid code of product!");
+					return;
+				}
+			} catch (SQLException e) {
+				forwardToErrorPage(request,response,e.getMessage());
+				return;
+			}
+			
+			//Prepares needed variables needed and daos
+			
+			Product product = null;
+			List<Supplier> suppliers = new ArrayList<>();
+			ProductDAO fullProductDao = new ProductDAO(connection);
+			SupplierDao supplierDao = new SupplierDao(connection);
+			UpdateLastDao updateLastDao = new UpdateLastDao(connection);
+			
+			try {
+				
+				float valProd = 0;
+				int numProd = 0;
+				
+				//Find product information
+				
+				product = fullProductDao.findProduct(productCode);
+				
+				//Updates last five seen products
+				
+				updateLastDao.updateLastFive(currentUser.getEmail(), productCode);
+				
+				//Finds the suppliers selling the item and retrieves all neeeded information
+				
+				suppliers = supplierDao.findSuppliers(productCode);
+				
+				for(int i = 0; i < suppliers.size(); i++) {
+					
+					//Retrieves information that can be found in DB.
+					
+					valProd = 0;
+					numProd = 0;
+					suppliers.get(i).setName(supplierDao.findSupplierName(suppliers.get(i).getCode())); 
+					suppliers.get(i).setScore(supplierDao.findSupplierScore(suppliers.get(i).getCode())); 
+					suppliers.get(i).setPolicies(supplierDao.findSupplierShips(suppliers.get(i).getCode()));
+					
+					//Retrieves information regarding the cart and the seller products already in it.
+					
+					if(pageCart.getCart() != null) {
+	
+						if(pageCart.getCart().get(suppliers.get(i).getCode()) == null) {
+							
+							suppliers.get(i).setValProducts("0");
+							suppliers.get(i).setNumProducts("0");
+							
+						}
+						else {
+							
+							for(CartedProduct cartedProduct : pageCart.getCart().get(suppliers.get(i).getCode())) {
+								
+								valProd += cartedProduct.getPrice()*cartedProduct.getQuantity();
+								numProd += cartedProduct.getQuantity();
+								
+							}
+							
+							suppliers.get(i).setValProducts(Float.toString(valProd));
+							suppliers.get(i).setNumProducts(Integer.toString(numProd));
+							
+						}
 						
 					}
 					else {
 						
-						for(CartedProduct cartedProduct : pageCart.getCart().get(suppliers.get(i).getCode())) {
-							
-							valProd += cartedProduct.getPrice()*cartedProduct.getQuantity();
-							numProd += cartedProduct.getQuantity();
-							
-						}
-						suppliers.get(i).setValProducts(Float.toString(valProd));
-						suppliers.get(i).setNumProducts(Integer.toString(numProd));
+						Map<String, List<CartedProduct>> cart = new HashMap<>(); 
+						pageCart.setCart(cart);
+						suppliers.get(i).setValProducts("0");
+						suppliers.get(i).setNumProducts("0");
 						
 					}
 					
 				}
-				else {
-					
-					Map<String, List<CartedProduct>> cart = new HashMap<>(); 
-					pageCart.setCart(cart);
-					suppliers.get(i).setValProducts("0");
-					suppliers.get(i).setNumProducts("0");
-					
-				}
+			}catch(SQLException e) {
+				
+				forwardToErrorPage(request,response,e.getMessage());
+				return;
 				
 			}
-		}catch(SQLException e) {
 			
-			forwardToErrorPage(request,response,e.getMessage());
-			return;
+			//Check the product used as input was found in DB. Redirects to error page otherwise
+			
+			if(product == null) {
+				
+				request.setAttribute("warning", "Code incorrect!");
+				forward(request,response, PathUtils.pathToErrorPage);
+				return;
+				
+			}
+	
+			//Method that loads next with required context variables.
+			
+			startGraphicEngine(request, response, product, suppliers);
 			
 		}
-		
-		if(product == null) {
+		else {
 			
-			request.setAttribute("warning", "Code incorrect!");
-			forward(request,response, PathUtils.pathToErrorPage);
-			return;
-			
+            response.sendRedirect(getServletContext().getContextPath() + PathUtils.goToLoginServletPath);
+            return;
+            
 		}
-
-		startGraphicEngine(request, response, product, suppliers);
 		
 	}
 	

@@ -29,6 +29,9 @@ import dao.SupplierDao;
 import utils.ConnectionHandler;
 import utils.PathUtils;
 
+//Servlet to put products in the cart, called before showing the cart after
+//putting products in it
+
 @WebServlet("/AddToCart")
 public class AddToCart extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -57,12 +60,14 @@ public class AddToCart extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
+    	doGet(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-
-        HttpSession session = request.getSession();
+    	
+    	//Retrieve session and request parameters needed to check and continue
+        
+    	HttpSession session = request.getSession();
 
         Cart currentCart = (Cart) session.getAttribute("currentCart");
 
@@ -73,11 +78,22 @@ public class AddToCart extends HttpServlet {
         String name = request.getParameter("productName");
         String quantityString = request.getParameter("quantity");
 
+        //Various checks to validate parameters given by user(null elements, 
+        //code with not numeric characters, not existent seller or product).
+        //Redirects to error page if necessary.
+        
         if(sellerCode == null || priceString == null || code == null || name == null || quantityString == null || supplierName == null) {
 
             forwardToErrorPage(request,response, "Null product parameter");
             return;
 
+        }
+        
+        if(!sellerCode.matches("[0-9]+") || !code.matches("[0-9]+")) {
+        	
+            forwardToErrorPage(request,response, "Invalid product or seller code!");
+            return;
+        	
         }
         
         ProductDAO productDao = new ProductDAO(connection);
@@ -116,6 +132,10 @@ public class AddToCart extends HttpServlet {
 			forwardToErrorPage(request,response,e.getMessage());
 			return;
         }
+
+        //Initial checks about the state of cart, followed by products being put in it
+        //If the product is already in the cart from the same seller
+        //it just increases the quantity of the product
         
         boolean alreadyPresent = false;
         float price = Float.parseFloat(priceString);
@@ -126,9 +146,10 @@ public class AddToCart extends HttpServlet {
         product.setQuantity(quantity);
         product.setProductCode(code);
         product.setProductName(name);
-
+        
+        //cart being null case
         if(currentCart == null) {
-
+        		
             List<CartedProduct> products = new ArrayList<>();
             products.add(product);
             Map<String, List<CartedProduct>> cart = new HashMap<>();
@@ -139,9 +160,13 @@ public class AddToCart extends HttpServlet {
 
         }
         else {
-
+        	
+        	//Check if the map inside the class is already initialized
+        	
             if(currentCart.getCart() != null) {
-
+            	
+            	//Check if a list of product associated with seller is already present
+            	
                 Map<String, List<CartedProduct>> cart = currentCart.getCart();
                 List<CartedProduct> products = null;
                 if(cart.get(sellerCode) == null) {
@@ -152,7 +177,9 @@ public class AddToCart extends HttpServlet {
 
                 }
                 else {
-
+                	
+                	//Check to see if product from same seller is already in cart
+                
                     for(CartedProduct checkProduct : cart.get(sellerCode)) {
 
                         if(checkProduct.getProductCode().equals(product.getProductCode())) {
@@ -164,6 +191,9 @@ public class AddToCart extends HttpServlet {
                         }
 
                     }
+                    
+                    //Add new product as there are no elements in the cart already
+                    
                     if(alreadyPresent == false) {
 
                         cart.get(sellerCode).add(product);
@@ -174,7 +204,9 @@ public class AddToCart extends HttpServlet {
                 }
             }
             else {
-
+            	
+            	//Create the supplier cart and put it with the products in the map
+            	
                 Map<String,List<CartedProduct>> cart = new HashMap<>();
                 List<CartedProduct> products = new ArrayList<>();
                 products.add(product);
@@ -184,10 +216,11 @@ public class AddToCart extends HttpServlet {
             }
 
         }
-
+        
+        //Sets new cart as session attribute and redirects to the servlet wich shows the cart
         session.setAttribute("currentCart", currentCart);
         response.sendRedirect(getServletContext().getContextPath() + PathUtils.goToCartServletPath);
-
+        
     }
 
     private void forwardToErrorPage(HttpServletRequest request, HttpServletResponse response, String error)throws ServletException, IOException{

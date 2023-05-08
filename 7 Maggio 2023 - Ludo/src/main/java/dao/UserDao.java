@@ -17,6 +17,8 @@ public class UserDao {
         this.connection = connection;
     }
 
+    //Method to fing user by mail and password
+    
     public User findUser(String email, String password) throws SQLException{
         User user = null;
         String performedAction = " finding a user by email and password";
@@ -52,6 +54,8 @@ public class UserDao {
         }
         return user;
     }
+    
+    //Method to find user by email
 
     public User getUserByEmail(String email) throws SQLException{
         User user = null;
@@ -124,6 +128,8 @@ public class UserDao {
         }
         return currentHomepageBean;
     }
+    
+    //Method to find user address by mail
 
     public Address getUserAddress(String user) throws SQLException{
 

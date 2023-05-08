@@ -17,9 +17,11 @@ public class ProductDAO{
         this.connection = connection;
     }
 
+    //Method  to find product information by code
+    
     public Product findProduct(String code) throws SQLException{
         Product product = null;
-        String performedAction = " finding all information about product by code";
+        String performedAction = " finding information about product by code";
         String query = "SELECT * FROM Prodotto WHERE Codice = ?";
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -94,6 +96,8 @@ public class ProductDAO{
         return productName;
 
     }
+    
+    //Method to find product if key is contained in name or description
 
     public List<Product> findProducts(String key) throws SQLException{
         List <Product> products = new ArrayList<>();
@@ -133,6 +137,8 @@ public class ProductDAO{
         return products;
 
     }
+    
+    //Method to find minimum cost of product by product code
 
     public String findMinCost(String code) throws SQLException{
 
@@ -211,6 +217,8 @@ public class ProductDAO{
 
     }
     
+    //Method to see if products exists by code and name
+    
     public boolean seeProduct(String code, String name) throws SQLException{
     	String performedAction = "Seeing if product exists";
     	String query = "SELECT * FROM Prodotto WHERE Codice = ? AND Nome = ?";
@@ -221,6 +229,40 @@ public class ProductDAO{
             preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, code);
             preparedStatement.setString(2, name);
+            resultSet = preparedStatement.executeQuery();
+
+            if(!resultSet.isBeforeFirst()) {
+            	return false;
+            }
+
+        }catch(SQLException e) {
+            throw new SQLException("Error accessing the DB when" + performedAction);
+        }finally {
+            try {
+                resultSet.close();
+            }catch (Exception e) {
+                throw new SQLException("Error closing the result set when" + performedAction);
+            }
+            try {
+                preparedStatement.close();
+            }catch (Exception e) {
+                throw new SQLException("Error closing the statement when" + performedAction);
+            }
+        }
+        return true;
+    }  
+    
+    //Method to see if products exists by code
+
+    public boolean seeProduct(String code) throws SQLException{
+    	String performedAction = "Seeing if product exists";
+    	String query = "SELECT * FROM Prodotto WHERE Codice = ?";
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, code);
             resultSet = preparedStatement.executeQuery();
 
             if(!resultSet.isBeforeFirst()) {

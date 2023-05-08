@@ -14,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -24,6 +25,10 @@ import utils.ConnectionHandler;
 import utils.PathUtils;
 import utils.TemplateHandler;
 
+import static utils.Statics.checkAccess;
+
+//Servlet that finds products in database following user input in searchbox
+//and loads the following page showing all found products
 
 @WebServlet("/Search")
 public class Search extends HttpServlet {
@@ -53,66 +58,90 @@ public class Search extends HttpServlet {
 
     @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	
-		String searchKey = request.getParameter("search");
-		
-		if(searchKey == null) {
-			forwardToErrorPage(request,response, "No key to search products with!");
-			return;
-		}
-		
-		ProductDAO productCostDao = new ProductDAO(connection);
-		List<Product> products= null;
+        
+    	HttpSession session = request.getSession();
 
-		
-		try {
-			products = productCostDao.findProducts(searchKey);
-			for(int i = 0; i < products.size();i++){
-				products.get(i).setMinCost(productCostDao.findMinCost(products.get(i).getCode()));
-			}
-		}catch(SQLException e) {
-			forwardToErrorPage(request,response,e.getMessage());
-			return;
-		}
-		
-		List<Integer> toRemove = new ArrayList<>();
-		
-		for(int i = 0; i < products.size(); i++) {
+    	//Check if there is a session user
+    	
+    	if(checkAccess(session)) {
+			String searchKey = request.getParameter("search");
 			
-			if(products.get(i).getMinCost() == null) {
-				toRemove.add(i);
+			//Check parameter validity
+			
+			if(searchKey == null) {
+				forwardToErrorPage(request,response, "No key to search products with!");
+				return;
 			}
 			
-		}
-		
-		Collections.sort(toRemove, new Comparator<Integer>() {
-		   public int compare(Integer a, Integer b) {
-		      //todo: handle null
-		      return b.compareTo(a);
-		   }
-		});
-		
-		for(int i = 0; i < toRemove.size();i++) {
+			//Create connection to dao to find products
 			
-			int index = toRemove.get(i);
-			products.remove(index);
+			ProductDAO productCostDao = new ProductDAO(connection);
+			List<Product> products= null;
+	
+			//Use dao method to retrieve all products with parameter in name or description
 			
-		}
-		
-		Collections.sort(products, new Comparator<Product>() {
-            @Override
-            public int compare(Product p1, Product p2) {
-                return Float.compare(Float.parseFloat(p1.getMinCost()),Float.parseFloat(p2.getMinCost()));
-            }
-        });
-		
-		startGraphicEngine(request, response, products); 
-		
+			try {
+				products = productCostDao.findProducts(searchKey);
+				for(int i = 0; i < products.size();i++){
+					products.get(i).setMinCost(productCostDao.findMinCost(products.get(i).getCode()));
+				}
+			}catch(SQLException e) {
+				forwardToErrorPage(request,response,e.getMessage());
+				return;
+			}
+			
+			//Checks if the database returned elements present in it without
+			//being available. You can understand that if they have null cost
+			
+			List<Integer> toRemove = new ArrayList<>();
+			
+			for(int i = 0; i < products.size(); i++) {
+				
+				if(products.get(i).getMinCost() == null) {
+					toRemove.add(i);
+				}
+				
+			}
+			
+			//sorts the indices of elements to be removed to help with their removal
+			
+			Collections.sort(toRemove, new Comparator<Integer>() {
+			   public int compare(Integer a, Integer b) {
+			      //todo: handle null
+			      return b.compareTo(a);
+			   }
+			});
+			
+			//Remove unavailable products 
+			
+			for(int i = 0; i < toRemove.size();i++) {
+				
+				int index = toRemove.get(i);
+				products.remove(index);
+				
+			}
+			
+			//Sort products by cost
+			
+			Collections.sort(products, new Comparator<Product>() {
+	            @Override
+	            public int compare(Product p1, Product p2) {
+	                return Float.compare(Float.parseFloat(p1.getMinCost()),Float.parseFloat(p2.getMinCost()));
+	            }
+	        });
+			
+			//Call method that redirects to new page setting context variables to be shown 
+			
+			startGraphicEngine(request, response, products); 
+	    }
+	    else {
+            response.sendRedirect(getServletContext().getContextPath() + PathUtils.goToLoginServletPath);
+            return;
+	    }
 	}
 
     @Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{
-    		
     		doGet(request, response);    		
     	}
 

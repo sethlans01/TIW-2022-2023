@@ -21,10 +21,9 @@ import dao.UserDao;
 import utils.ConnectionHandler;
 import utils.PathUtils;
 import utils.TemplateHandler;
-/*
- * Servlet implementation class Login
 
- */
+//Servlet to check login
+
 @WebServlet("/Login")
 public class Login extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -35,7 +34,6 @@ public class Login extends HttpServlet {
      */
     public Login() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     @Override
@@ -53,31 +51,30 @@ public class Login extends HttpServlet {
     		e.printStackTrace();
     	}
     }
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	@Override
+
+    
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 			doPost(request,response);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		
+		//Retrieve parameters from server
+		
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 
+		//Check parameters validity
+		
 		if(email == null || password == null) {
 			
 			forwardToErrorPage(request,response, "Null email or password");
 			return;
 
 		}
-
+		
+		//Create connection to dao user to check if the user exists
+		
 		UserDao userDao = new UserDao(connection);
 		User user = null;
 		Cart cart = new Cart();
@@ -89,12 +86,16 @@ public class Login extends HttpServlet {
 			return;
 		}
 
+		//Check if the user was not found. In the case, send to login page showing error
+		
 		if(user == null) {
 			request.setAttribute("warning", "Email or password incorrect!");
 			forward(request,response, PathUtils.pathToLoginPage);
 			return;
 		}
 
+		//Create new cart and user as session attributes
+		
 		HttpSession session = request.getSession();
 		session.setAttribute("currentUser", user);
 		session.setAttribute("currentCart", cart);

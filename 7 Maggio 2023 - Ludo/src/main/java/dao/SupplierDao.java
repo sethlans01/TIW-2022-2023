@@ -19,6 +19,8 @@ public class SupplierDao{
     public SupplierDao(Connection connection) {
         this.connection = connection;
     }
+    
+    //Method to find all suppliers selling a product using the product code
 
     public List<Supplier> findSuppliers(String productCode) throws SQLException{
         List<Supplier> suppliers = new ArrayList<>();
@@ -57,6 +59,8 @@ public class SupplierDao{
         return suppliers;
 
     }
+    
+    //Method to find supplier name using supplier code
 
     public String findSupplierName(String code) throws SQLException{
         String name = new String();
@@ -92,6 +96,8 @@ public class SupplierDao{
         return name;
     }
 
+    //Method to find the supplier score using supplier code
+    
     public String findSupplierScore(String code) throws SQLException{
         String score = new String();
         String performedAction = " finding a supplier score by code";
@@ -125,6 +131,8 @@ public class SupplierDao{
 
         return score;
     }
+    
+    //Method to find suppliers shipping policies using supplier code
 
     public List<Ship> findSupplierShips(String code) throws SQLException{
         List<Ship> policies = new ArrayList<>();
@@ -165,6 +173,8 @@ public class SupplierDao{
 
         return policies;
     }
+    
+    //Method to check if supplier exists using supplier code and name
     
     public boolean seeSupplier(String code, String name) throws SQLException{
     	String performedAction = "Seeing if supplier exists";

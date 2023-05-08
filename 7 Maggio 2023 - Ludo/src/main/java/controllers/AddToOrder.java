@@ -63,7 +63,7 @@ public class AddToOrder extends HttpServlet {
         HttpSession session = request.getSession();
 
         String sellerId = request.getParameter("sellerId");
-
+                
         // Get request parameter and check if it's a valid parameter
         if(checkParameter(sellerId, session)){
             // Get user
