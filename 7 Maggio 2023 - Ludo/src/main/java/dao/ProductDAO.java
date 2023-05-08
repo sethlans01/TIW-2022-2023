@@ -251,39 +251,6 @@ public class ProductDAO{
         }
         return true;
     }  
-    
-    //Method to see if products exists by code
-
-    public boolean seeProduct(String code) throws SQLException{
-    	String performedAction = "Seeing if product exists";
-    	String query = "SELECT * FROM Prodotto WHERE Codice = ?";
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-
-        try {
-            preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, code);
-            resultSet = preparedStatement.executeQuery();
-
-            if(!resultSet.isBeforeFirst()) {
-            	return false;
-            }
-
-        }catch(SQLException e) {
-            throw new SQLException("Error accessing the DB when" + performedAction);
-        }finally {
-            try {
-                resultSet.close();
-            }catch (Exception e) {
-                throw new SQLException("Error closing the result set when" + performedAction);
-            }
-            try {
-                preparedStatement.close();
-            }catch (Exception e) {
-                throw new SQLException("Error closing the statement when" + performedAction);
-            }
-        }
-        return true;
-    }  
+  
 
 }
