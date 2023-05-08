@@ -94,18 +94,6 @@ public class SelectProduct extends HttpServlet {
 	        	
 	        }
 	        
-	        ProductDAO productDao = new ProductDAO(connection);
-	        
-	        try {
-				if(!productDao.seeProduct(productCode)) {
-					forwardToErrorPage(request, response, "Invalid code of product!");
-					return;
-				}
-			} catch (SQLException e) {
-				forwardToErrorPage(request,response,e.getMessage());
-				return;
-			}
-			
 			//Prepares needed variables needed and daos
 			
 			Product product = null;
