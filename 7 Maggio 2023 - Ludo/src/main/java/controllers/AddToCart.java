@@ -89,9 +89,16 @@ public class AddToCart extends HttpServlet {
 
         }
         
-        if(!sellerCode.matches("[0-9]+") || !code.matches("[0-9]+")) {
+        if(!sellerCode.matches("[0-9]+") || !code.matches("[0-9]+") ) {
         	
             forwardToErrorPage(request,response, "Invalid product or seller code!");
+            return;
+        	
+        }
+        
+        if(!quantityString.matches("[0-9]+")) {
+        	
+            forwardToErrorPage(request,response, "Invalid quantity set!");
             return;
         	
         }
