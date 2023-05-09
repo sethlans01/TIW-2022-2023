@@ -103,6 +103,11 @@ public class AddToCart extends HttpServlet {
         	
         }
         
+        if(Float.parseFloat(quantityString) == 0) {
+            forwardToErrorPage(request,response, "Quantity set to 0!");
+            return;
+        }
+        
         ProductDAO productDao = new ProductDAO(connection);
         
         try {
