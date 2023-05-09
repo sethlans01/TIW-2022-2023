@@ -18,7 +18,6 @@ import dao.UserDao;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 import utils.ConnectionHandler;
-import utils.PathUtils;
 
 import static utils.TemplateHandler.getEngine;
 
@@ -60,38 +59,26 @@ public class Home extends HttpServlet {
         // Grab current session
         HttpSession session = request.getSession();
 
-        if(checkAccess(session)){
-            // Create a DAO to access DB
-            LastFiveDAO u5DAO = new LastFiveDAO(connection);
-            // Get username from the context
-            User current = (User) session.getAttribute("currentUser");
-            // Get the bean from DAO
-            Homepage currentHomepageBean;
-            try {
-                currentHomepageBean = u5DAO.getHomepageBean(current.getEmail());
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            // Add user's full name to the bean
-            UserDao userDao = new UserDao(connection);
-            try {
-                currentHomepageBean = userDao.getFullName(currentHomepageBean);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+        // Create a DAO to access DB
+        LastFiveDAO u5DAO = new LastFiveDAO(connection);
+        // Get username from the context
+        User current = (User) session.getAttribute("currentUser");
+        // Get the bean from DAO
+        Homepage currentHomepageBean;
+        try {
+            currentHomepageBean = u5DAO.getHomepageBean(current.getEmail());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        // Add user's full name to the bean
+        UserDao userDao = new UserDao(connection);
+        try {
+            currentHomepageBean = userDao.getFullName(currentHomepageBean);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
             // Call view engine
             startGraphicEngine(request, response, currentHomepageBean, "/home.html");
-        } else {
-            response.sendRedirect(getServletContext().getContextPath() + PathUtils.goToLoginServletPath);
-        }
-
-    }
-
-    // Check if the current client is logged in
-    private boolean checkAccess(HttpSession session) throws ServletException{
-
-        User current = (User) session.getAttribute("currentUser");
-        return current != null;
 
     }
 

@@ -32,7 +32,6 @@ import utils.ConnectionHandler;
 import utils.PathUtils;
 import utils.TemplateHandler;
 
-import static utils.Statics.checkAccess;
 
 //Servlet called when user wants to see more information about product 
 //with all its sellers
@@ -68,11 +67,9 @@ public class SelectProduct extends HttpServlet {
     
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		//Check if there is user in session. Redirects to error page otherwise.
 		
     	HttpSession session = request.getSession();
 		
-		if(checkAccess(session)) {
 			
 			//Check validity of parameters. Redirects to error page otherwise.
 			
@@ -185,13 +182,8 @@ public class SelectProduct extends HttpServlet {
 			
 			startGraphicEngine(request, response, product, suppliers);
 			
-		}
-		else {
-			
-            response.sendRedirect(getServletContext().getContextPath() + PathUtils.goToLoginServletPath);
-            return;
-            
-		}
+		
+
 		
 	}
 	

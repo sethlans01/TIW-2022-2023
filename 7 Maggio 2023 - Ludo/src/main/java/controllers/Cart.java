@@ -8,7 +8,6 @@ import dao.SupplierDao;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 import utils.ConnectionHandler;
-import utils.PathUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -22,7 +21,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import static utils.Statics.checkAccess;
 import static utils.TemplateHandler.getEngine;
 
 @WebServlet("/Cart")
@@ -57,12 +55,6 @@ public class Cart extends HttpServlet {
 
         // Get current session
         HttpSession session = request.getSession();
-
-        // Check if user logged in
-        if(!checkAccess(session)) {
-            response.sendRedirect(getServletContext().getContextPath() + PathUtils.goToLoginServletPath);
-            return;
-        }
 
         // Control variable to display empty cart in cart.html
         boolean emptyCart;

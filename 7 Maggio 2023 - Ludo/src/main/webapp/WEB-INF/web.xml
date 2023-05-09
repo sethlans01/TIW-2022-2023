@@ -17,4 +17,21 @@
     <param-name>dbDriver</param-name>
     <param-value>com.mysql.cj.jdbc.Driver</param-value>
   </context-param>
+  
+    <filter>
+  		<filter-name>CheckLoggedUser</filter-name>
+  		<filter-class>filters.CheckLoggedUser</filter-class>
+  </filter>
+  
+    <filter-mapping>
+	  	<filter-name>CheckLoggedUser</filter-name>
+	  	<url-pattern>/Home</url-pattern>
+	  	<url-pattern>/Search</url-pattern>
+	  	<url-pattern>/SelectProduct</url-pattern>
+	  	<url-pattern>/AddToCart</url-pattern>
+	  	<url-pattern>/Cart</url-pattern>
+	    <url-pattern>/AddToOrder</url-pattern>
+	  	<url-pattern>/Orders</url-pattern>
+    </filter-mapping>
+    
 </web-app>

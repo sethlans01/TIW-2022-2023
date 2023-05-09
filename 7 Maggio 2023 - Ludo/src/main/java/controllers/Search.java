@@ -14,7 +14,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -24,8 +23,6 @@ import dao.ProductDAO;
 import utils.ConnectionHandler;
 import utils.PathUtils;
 import utils.TemplateHandler;
-
-import static utils.Statics.checkAccess;
 
 //Servlet that finds products in database following user input in searchbox
 //and loads the following page showing all found products
@@ -58,12 +55,8 @@ public class Search extends HttpServlet {
 
     @Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        
-    	HttpSession session = request.getSession();
-
-    	//Check if there is a session user
     	
-    	if(checkAccess(session)) {
+    	
 			String searchKey = request.getParameter("search");
 			
 			//Check parameter validity
@@ -133,11 +126,7 @@ public class Search extends HttpServlet {
 			//Call method that redirects to new page setting context variables to be shown 
 			
 			startGraphicEngine(request, response, products); 
-	    }
-	    else {
-            response.sendRedirect(getServletContext().getContextPath() + PathUtils.goToLoginServletPath);
-            return;
-	    }
+			
 	}
 
     @Override

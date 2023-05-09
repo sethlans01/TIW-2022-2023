@@ -6,7 +6,6 @@ import dao.OrdersDAO;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 import utils.ConnectionHandler;
-import utils.PathUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -20,7 +19,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import static utils.Statics.checkAccess;
 import static utils.TemplateHandler.getEngine;
 
 @WebServlet("/Orders")
@@ -54,7 +52,7 @@ public class Orders extends HttpServlet {
         // Grab current session
         HttpSession session = request.getSession();
 
-        if(checkAccess(session)){
+        
 
             // Create an Order bean
             Order currentOrderBean = new Order();
@@ -76,9 +74,6 @@ public class Orders extends HttpServlet {
             boolean emptyList = currentOrderBean.getOrderList().size() == 0;
 
             startGraphicEngine(request, response, currentOrderBean, emptyList, "/orders.html");
-        } else {
-            response.sendRedirect(getServletContext().getContextPath() + PathUtils.goToLoginServletPath);
-        }
 
     }
 
