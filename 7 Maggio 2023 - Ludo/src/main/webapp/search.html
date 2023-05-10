@@ -178,7 +178,6 @@
                             <td class = "table column">
                                 <form action="/AddToCart" method= "get" th:action="@{/AddToCart}"> <!--Form to send to add product to cart -->
                                     <label for="quantity">Quantity:</label>
-                                    <input type = "hidden" required th:value="${supplier.cost}" name = "supplierCost">
                                     <input type = "hidden" required th:value="${selectedProduct.code}" name = "productCode">
                                     <input type = "hidden" required th:value="${selectedProduct.name}" name = "productName">
                                     <input type = "hidden" required th:value="${supplier.code}" name = "supplierCode">
