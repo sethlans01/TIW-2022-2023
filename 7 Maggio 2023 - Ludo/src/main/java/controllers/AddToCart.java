@@ -73,7 +73,6 @@ public class AddToCart extends HttpServlet {
 
         String sellerCode = request.getParameter("supplierCode");
         String supplierName = request.getParameter("supplierName");
-        String priceString = request.getParameter("supplierCost");
         String code = request.getParameter("productCode");
         String name = request.getParameter("productName");
         String quantityString = request.getParameter("quantity");
@@ -82,7 +81,7 @@ public class AddToCart extends HttpServlet {
         //code with not numeric characters, not existent seller or product).
         //Redirects to error page if necessary.
         
-        if(sellerCode == null || priceString == null || code == null || name == null || quantityString == null || supplierName == null) {
+        if(sellerCode == null || code == null || name == null || quantityString == null || supplierName == null) {
 
             forwardToErrorPage(request,response, "Null product parameter");
             return;
@@ -134,30 +133,26 @@ public class AddToCart extends HttpServlet {
         
         ProductPricesDAO productPricesDao = new ProductPricesDAO(connection);
         
-        try {
-        	float price = productPricesDao.getProductPrice(sellerCode, code);
-        	if(Float.parseFloat(priceString) != price) {
-				forwardToErrorPage(request, response, "Cost was manipulated!");
-				return;
-        	}
-        }catch(SQLException e) {
-			forwardToErrorPage(request,response,e.getMessage());
-			return;
-        }
+
 
         //Initial checks about the state of cart, followed by products being put in it
         //If the product is already in the cart from the same seller
         //it just increases the quantity of the product
         
         boolean alreadyPresent = false;
-        float price = Float.parseFloat(priceString);
         int quantity = Integer.parseInt(quantityString);
         CartedProduct product = new CartedProduct();
         product.setSellerCode(sellerCode);
-        product.setPrice(price);
         product.setQuantity(quantity);
         product.setProductCode(code);
         product.setProductName(name);
+        try {
+        	product.setPrice(productPricesDao.getProductPrice(sellerCode, code));
+
+        }catch(SQLException e) {
+			forwardToErrorPage(request,response,e.getMessage());
+			return;
+        }
         
         //cart being null case
         if(currentCart == null) {
