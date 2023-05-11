@@ -107,15 +107,14 @@ public class SelectProduct extends HttpServlet {
 				//Find product information
 				
 				product = fullProductDao.findProduct(productCode);
-				
+
 				//Check the product used as input was found in DB. Redirects to error page otherwise
-			
+				
 				if(product == null) {
-				
-					request.setAttribute("warning", "Code incorrect!");
-					forward(request,response, PathUtils.pathToErrorPage);
+					
+					forwardToErrorPage(request,response, "No products found!");
 					return;
-				
+					
 				}
 				
 				//Updates last five seen products
@@ -178,6 +177,7 @@ public class SelectProduct extends HttpServlet {
 				
 			}
 			
+
 	
 			//Method that loads next with required context variables.
 			
