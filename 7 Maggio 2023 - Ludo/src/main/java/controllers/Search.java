@@ -61,7 +61,7 @@ public class Search extends HttpServlet {
 			
 			//Check parameter validity
 			
-			if(searchKey == null) {
+			if(searchKey == null || searchKey == "") {
 				forwardToErrorPage(request,response, "No key to search products with!");
 				return;
 			}
