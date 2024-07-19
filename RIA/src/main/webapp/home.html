@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" id = "homeCss" type="text/css" href="./css/home.css"/>
+    <script src = "js/utils.js" charset="utf-8" defer></script>
+    <script src = "js/fakazon.js" charset="utf-8" defer></script> 
+    <title>Home</title>
+  </head>
+  <body>
+    <div id="general">
+        <div id="header"> <!-- Header section -->
+            <h1 id="title"> <!-- Title of the header section -->
+                <span>Welcome back, </span>
+                <span id="userName">User</span>
+                <span>!</span>
+            </h1>
+            <div id="buttons"> <!-- Navigation buttons -->
+                <form action="#" class="header-button" onSubmit = "return false;">
+                    <button id = "buttonHome" type="submit" class="primary-button" >HOME</button>
+                </form>
+                <form action="#" class="header-button" onSubmit = "return false;">
+                    <button id = "buttonCart" type="submit" class="primary-button">CART</button>
+                </form>
+                <form action="#" class="header-button" method="get" onSubmit = "return false;">
+                    <button id = "buttonOrders" type="submit" class="primary-button">ORDERS</button>
+                </form>
+            </div>
+        </div>
+        <div id="content"> 
+            <div id="loading_msg" class="loading-message">
+				<b>Communicating with Server ...</b>
+			</div>
+     	</div>
+      </div>
+   </body>
+</html>
